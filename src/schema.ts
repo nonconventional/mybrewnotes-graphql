@@ -1,4 +1,6 @@
-module.exports = `
+import { gql } from "apollo-server";
+
+export default gql`
   type Query {
     brew(id: ID): Brew!
     brews: [Brew]!

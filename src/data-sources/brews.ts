@@ -1,5 +1,24 @@
-const { DataSource } = require('apollo-datasource');
-const Sequelize = require('sequelize');
+import { DataSource } from 'apollo-datasource';
+import { BuildOptions, DataTypes, Model } from 'sequelize';
+
+import sequelize from '../utils/sequelize';
+
+interface BrewsAPI {
+  store: {
+    brews: BrewStatic
+  },
+}
+
+interface Brew extends Model {
+  readonly id: number;
+  name: string;
+  description: string;
+  batchSize: string;
+}
+
+type BrewStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): Brew;
+}
 
 class BrewsAPI extends DataSource {
   constructor() {
@@ -22,12 +41,6 @@ class BrewsAPI extends DataSource {
 };
 
 const createStore = () => {
-  const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    logging: false,
-    storage: './app.db',
-  });
-
   const CREATE_BREWS_QUERY = `CREATE TABLE IF NOT EXISTS brews(
     id INTEGER PRIMARY KEY,
     createdAt DATETIME,
@@ -40,14 +53,14 @@ const createStore = () => {
   sequelize.query(CREATE_BREWS_QUERY);
 
 
-  const brews = sequelize.define('brew', {
-    name: Sequelize.STRING,
-    description: Sequelize.STRING,
-    batchSize: Sequelize.STRING,
+  const brews = <BrewStatic>sequelize.define('brew', {
+    name: DataTypes.STRING,
+    description: DataTypes.STRING,
+    batchSize: DataTypes.STRING,
   });
 
   return { brews };
 };
 
 
-module.exports = BrewsAPI
+export default BrewsAPI;

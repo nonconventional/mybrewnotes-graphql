@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   Query: {
     brew: (root, { id }, { dataSources }) =>
       dataSources.brewsAPI.getBrewById({ id }),
